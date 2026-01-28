@@ -2,6 +2,25 @@
 📋 Project Overview
 A comprehensive AI-powered web application for detecting potato leaf diseases using computer vision and deep learning. The system can identify healthy leaves, early blight, and late blight with high accuracy and generate professional reports.
 
+| Feature               |  | app.py |  | train.py | 
+|-----------------------|-------------|-------------
+| Single Image          |  ✅        |      -       
+|---------------------------------------------------
+| Batch Processing      |  ✅        |      -        
+|---------------------------------------------------
+| Camera Capture        |  ✅        |      -        
+|----------------------------------------------------
+| PDF Export            |  ✅        |      -       
+|----------------------------------------------------
+| CSV Export            |  ✅        |      -        
+|----------------------------------------------------
+| Disease Info          |  ✅        |      -       
+|----------------------------------------------------
+| Memory Optimization   |  ✅        |     ✅       
+|----------------------------------------------------
+| Class Mapping         |  ✅        |     ✅       
+|-----------------------|-------------|--------------
+
 🗂️ Project Structure
 potato/
 ├── app.py                    # Main Flask application
@@ -250,15 +269,3 @@ This comprehensive system represents a complete, production-ready solution for p
 
 
 
-| Feature               | app1.py | app.py | train1.py | train.py | 
-|-----------------------|---------|---------|---------|--------------| 
-| Single Image          | ✅      | ✅      | -             | -     | 
-| Batch Processing      | ❌      | ✅      | -             | -     | 
-| Camera Capture        | ❌      | ✅      | -             | -     | 
-| PDF Export            | ❌      | ✅      | -             | -     | 
-| CSV Export            | ❌      | ✅      | -             | -     | 
-| Disease Info          | ❌      | ✅      | -             | -     | 
-| Memory Optimization   | ❌      | ✅      | ❌            | ✅   | 
-| Class Mapping         | ❌      | ✅      | ❌            | ✅   | 
-| Checkpoint Saving     | -        | -       | ❌            | ✅   | 
-| GPU VRAM Friendly     | -        | -       | ❌            | ✅   |
