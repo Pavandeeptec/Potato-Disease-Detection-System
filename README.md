@@ -43,7 +43,7 @@ pip install -r requirements.txt
 
 3. Get the trained model:
    - **Option 1**: Train your own model using `train.py` (recommended)
-   - **Option 2**: Download pre-trained model from [Google Drive](https://drive.google.com/your-model-link)
+   - **Option 2**: Download pre-trained model from [Google Drive](https://drive.google.com/file/d/1xP7g79pBvqIqFlQiOGTvwlIuGIqIjysO/view?usp=drive_link))
    - Place the model file as `potato_disease_model.pth` in the root directory
 
 4. Run the application:
