@@ -32,7 +32,7 @@ A comprehensive AI-powered web application for detecting potato leaf diseases us
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/potato-disease-detection.git
+git clone https://github.com/pavandeeptec/potato-disease-detection.git
 cd potato-disease-detection
 ```
 
