@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Potato Leaf Disease Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2024">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-leaf"></i>
+                    <h1>Potato Disease AI</h1>
+                </div>
+                <p class="subtitle">Advanced AI-powered potato leaf disease detection system</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <div id="uploadSection" class="section">
+                <div class="upload-area">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Upload Potato Leaf Images</h3>
+                    <p>Drag and drop images here, browse files, or use your camera</p>
+                    <input type="file" id="imageUpload" accept="image/*" multiple>
+                    <div class="upload-buttons">
+                        <button class="btn-primary" id="browseBtn">
+                            <i class="fas fa-folder-open"></i>
+                            Browse Files
+                        </button>
+                        <button class="btn-primary" id="cameraBtn">
+                            <i class="fas fa-camera"></i>
+                            Use Camera
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Camera Modal -->
+                <div id="cameraModal" class="camera-modal" style="display: none;">
+                    <div class="camera-content">
+                        <div class="camera-header">
+                            <h3><i class="fas fa-camera"></i> Capture Potato Leaf</h3>
+                            <button class="btn-close" id="closeCameraBtn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="camera-body">
+                            <video id="cameraVideo" autoplay playsinline></video>
+                            <canvas id="cameraCanvas" style="display: none;"></canvas>
+                        </div>
+                        <div class="camera-footer">
+                            <button class="btn-secondary" id="closeCameraBtn2">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+                            <button class="btn-primary" id="captureBtn">
+                                <i class="fas fa-camera"></i>
+                                Capture Photo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="previewContainer" class="preview-container" style="display: none;">
+                    <h4><i class="fas fa-images"></i> Selected Images</h4>
+                    <div id="imagePreview" class="image-grid"></div>
+                    <div class="action-buttons">
+                        <button class="btn-primary" id="analyzeBtn">
+                            <i class="fas fa-microscope"></i>
+                            Analyze Images
+                        </button>
+                        <button class="btn-secondary" id="clearBtn">
+                            <i class="fas fa-trash"></i>
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Section -->
+            <div id="loadingSection" class="section" style="display: none;">
+                <div class="loading-container">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                    </div>
+                    <h3>AI Analysis in Progress</h3>
+                    <p>Our advanced AI is examining your potato leaves...</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="section" style="display: none;">
+                <div class="results-header">
+                    <h3><i class="fas fa-chart-line"></i> Analysis Results</h3>
+                    <div class="export-buttons">
+                        <button class="btn-export" id="exportPdfBtn">
+                            <i class="fas fa-file-pdf"></i>
+                            Export PDF
+                        </button>
+                        <button class="btn-export" id="exportCsvBtn">
+                            <i class="fas fa-file-csv"></i>
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div id="resultsContainer" class="results-grid"></div>
+
+                <div class="results-actions">
+                    <button class="btn-primary" id="newAnalysisBtn">
+                        <i class="fas fa-plus"></i>
+                        New Analysis
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Potato Disease AI Detection System</p>
+        </footer>
+    </div>
+
+    <script>
+        class PotatoDiseaseDetector {
+            constructor() {
+                this.uploadedFiles = [];
+                this.currentResults = [];
+                this.initializeElements();
+                this.bindEvents();
+            }
+
+            initializeElements() {
+                this.elements = {
+                    imageUpload: document.getElementById('imageUpload'),
+                    browseBtn: document.getElementById('browseBtn'),
+                    cameraBtn: document.getElementById('cameraBtn'),
+                    cameraModal: document.getElementById('cameraModal'),
+                    cameraVideo: document.getElementById('cameraVideo'),
+                    cameraCanvas: document.getElementById('cameraCanvas'),
+                    captureBtn: document.getElementById('captureBtn'),
+                    closeCameraBtn: document.getElementById('closeCameraBtn'),
+                    closeCameraBtn2: document.getElementById('closeCameraBtn2'),
+                    uploadSection: document.getElementById('uploadSection'),
+                    previewContainer: document.getElementById('previewContainer'),
+                    imagePreview: document.getElementById('imagePreview'),
+                    analyzeBtn: document.getElementById('analyzeBtn'),
+                    clearBtn: document.getElementById('clearBtn'),
+                    loadingSection: document.getElementById('loadingSection'),
+                    resultsSection: document.getElementById('resultsSection'),
+                    resultsContainer: document.getElementById('resultsContainer'),
+                    exportPdfBtn: document.getElementById('exportPdfBtn'),
+                    exportCsvBtn: document.getElementById('exportCsvBtn'),
+                    newAnalysisBtn: document.getElementById('newAnalysisBtn')
+                };
+                
+                this.cameraStream = null;
+            }
+
+            bindEvents() {
+                this.elements.browseBtn.addEventListener('click', () => this.elements.imageUpload.click());
+                this.elements.cameraBtn.addEventListener('click', () => this.openCamera());
+                this.elements.imageUpload.addEventListener('change', (e) => this.handleFileSelection(e));
+                this.elements.captureBtn.addEventListener('click', () => this.capturePhoto());
+                this.elements.closeCameraBtn.addEventListener('click', () => this.closeCamera());
+                this.elements.closeCameraBtn2.addEventListener('click', () => this.closeCamera());
+                this.elements.analyzeBtn.addEventListener('click', () => this.analyzeImages());
+                this.elements.clearBtn.addEventListener('click', () => this.clearSelection());
+                this.elements.exportPdfBtn.addEventListener('click', () => this.exportResults('pdf'));
+                this.elements.exportCsvBtn.addEventListener('click', () => this.exportResults('csv'));
+                this.elements.newAnalysisBtn.addEventListener('click', () => this.resetToUpload());
+
+                // Drag and drop functionality
+                const uploadArea = document.querySelector('.upload-area');
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.add('drag-over');
+                });
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.classList.remove('drag-over');
+                });
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.classList.remove('drag-over');
+                    this.handleFileSelection({ target: { files: e.dataTransfer.files } });
+                });
+                
+                // Close camera modal when clicking outside
+                this.elements.cameraModal.addEventListener('click', (e) => {
+                    if (e.target === this.elements.cameraModal) {
+                        this.closeCamera();
+                    }
+                });
+            }
+
+            handleFileSelection(event) {
+                const newFiles = Array.from(event.target.files);
+                
+                // Add new files to existing ones
+                this.uploadedFiles = [...this.uploadedFiles, ...newFiles];
+                
+                if (this.uploadedFiles.length > 0) {
+                    this.showPreview();
+                }
+                
+                // Reset the input value
+                this.elements.imageUpload.value = '';
+            }
+
+            async openCamera() {
+                try {
+                    // Request camera access
+                    this.cameraStream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: 'environment', // Use rear camera on mobile
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        }
+                    });
+                    
+                    this.elements.cameraVideo.srcObject = this.cameraStream;
+                    this.elements.cameraModal.style.display = 'flex';
+                } catch (error) {
+                    console.error('Camera access error:', error);
+                    alert('Unable to access camera. Please check permissions or use the Browse Files option.');
+                }
+            }
+
+            closeCamera() {
+                if (this.cameraStream) {
+                    this.cameraStream.getTracks().forEach(track => track.stop());
+                    this.cameraStream = null;
+                }
+                this.elements.cameraModal.style.display = 'none';
+            }
+
+            capturePhoto() {
+                const video = this.elements.cameraVideo;
+                const canvas = this.elements.cameraCanvas;
+                const context = canvas.getContext('2d');
+                
+                // Set canvas size to match video
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                // Draw video frame to canvas
+                context.drawImage(video, 0, 0);
+                
+                // Convert canvas to blob
+                canvas.toBlob((blob) => {
+                    // Create a file from the blob
+                    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                    const file = new File([blob], `camera-capture-${timestamp}.jpg`, {
+                        type: 'image/jpeg'
+                    });
+                    
+                    // Add to uploaded files
+                    this.uploadedFiles.push(file);
+                    this.showPreview();
+                    this.closeCamera();
+                }, 'image/jpeg', 0.8);
+            }
+
+            showPreview() {
+                this.elements.previewContainer.style.display = 'block';
+                this.elements.imagePreview.innerHTML = '';
+
+                this.uploadedFiles.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const imageCard = document.createElement('div');
+                        imageCard.className = 'image-card';
+                        imageCard.innerHTML = `
+                            <img src="${e.target.result}" alt="${file.name}">
+                            <div class="image-info">
+                                <p class="image-name">${file.name}</p>
+                                <button class="btn-remove" onclick="detector.removeImage(${index})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+                        this.elements.imagePreview.appendChild(imageCard);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            removeImage(index) {
+                this.uploadedFiles.splice(index, 1);
+                if (this.uploadedFiles.length === 0) {
+                    this.elements.previewContainer.style.display = 'none';
+                } else {
+                    this.showPreview();
+                }
+            }
+
+            clearSelection() {
+                this.uploadedFiles = [];
+                this.elements.previewContainer.style.display = 'none';
+                this.elements.imageUpload.value = '';
+            }
+
+            async analyzeImages() {
+                this.showLoading();
+
+                const formData = new FormData();
+                this.uploadedFiles.forEach(file => formData.append('files[]', file));
+
+                try {
+                    const response = await fetch('/predict', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const results = await response.json();
+
+                    if (results.error) {
+                        throw new Error(results.error);
+                    }
+
+                    this.currentResults = results;
+                    this.showResults(results);
+                } catch (error) {
+                    alert(`Error: ${error.message}`);
+                    this.resetToUpload();
+                }
+            }
+
+            showLoading() {
+                this.elements.uploadSection.style.display = 'none';
+                this.elements.loadingSection.style.display = 'block';
+
+                // Animate progress bar
+                const progressFill = document.querySelector('.progress-fill');
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 15;
+                    if (progress > 90) progress = 90;
+                    progressFill.style.width = progress + '%';
+                }, 200);
+
+                setTimeout(() => clearInterval(interval), 3000);
+            }
+
+            showResults(results) {
+                this.elements.loadingSection.style.display = 'none';
+                this.elements.resultsSection.style.display = 'block';
+
+                this.elements.resultsContainer.innerHTML = '';
+
+                results.forEach(result => {
+                    const resultCard = this.createResultCard(result);
+                    this.elements.resultsContainer.appendChild(resultCard);
+                });
+            }
+
+            createResultCard(result) {
+                const card = document.createElement('div');
+                card.className = 'result-card';
+
+                const diseaseClass = result.prediction ? result.prediction.toLowerCase().replace(/\s+/g, '-') : 'unknown';
+                const confidencePercent = parseFloat(result.confidence) || 0;
+                const confidenceClass = confidencePercent >= 80 ? 'high' : confidencePercent >= 60 ? 'medium' : 'low';
+
+                card.innerHTML = `
+                    <div class="result-image">
+                        <img src="${result.image}" alt="${result.filename}">
+                        <div class="confidence-badge ${confidenceClass}">
+                            ${result.confidence}
+                        </div>
+                    </div>
+                    <div class="result-content">
+                        <h4 class="result-title">${result.filename}</h4>
+                        <div class="diagnosis ${diseaseClass}">
+                            <i class="fas ${this.getDiseaseIcon(result.prediction)}"></i>
+                            <span>${result.prediction}</span>
+                        </div>
+                        ${result.info ? `
+                            <div class="result-details">
+                                <div class="detail-item">
+                                    <strong><i class="fas fa-info-circle"></i> Description:</strong>
+                                    <p>${result.info.description}</p>
+                                </div>
+                                <div class="detail-item">
+                                    <strong><i class="fas fa-eye"></i> Symptoms:</strong>
+                                    <p>${result.info.symptoms}</p>
+                                </div>
+                                <div class="detail-item">
+                                    <strong><i class="fas fa-prescription-bottle-alt"></i> Recommended Action:</strong>
+                                    <p>${result.info.action}</p>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+
+                return card;
+            }
+
+            getDiseaseIcon(prediction) {
+                if (!prediction) return 'fa-question';
+                const pred = prediction.toLowerCase();
+                if (pred.includes('healthy')) return 'fa-check-circle';
+                if (pred.includes('early')) return 'fa-exclamation-triangle';
+                if (pred.includes('late')) return 'fa-times-circle';
+                return 'fa-leaf';
+            }
+
+            async exportResults(format) {
+                try {
+                    const response = await fetch('/export', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            data: this.currentResults,
+                            format: format
+                        })
+                    });
+
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `potato_disease_report.${format}`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    } else {
+                        throw new Error('Export failed');
+                    }
+                } catch (error) {
+                    alert(`Export failed: ${error.message}`);
+                }
+            }
+
+            resetToUpload() {
+                this.uploadedFiles = [];
+                this.currentResults = [];
+                this.elements.imageUpload.value = '';
+                this.elements.previewContainer.style.display = 'none';
+                this.elements.loadingSection.style.display = 'none';
+                this.elements.resultsSection.style.display = 'none';
+                this.elements.uploadSection.style.display = 'block';
+                this.closeCamera(); // Close camera if open
+            }
+        }
+
+        // Initialize the application
+        const detector = new PotatoDiseaseDetector();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+
+captum
+flask
+torch
+torchvision
+transformers
+fpdf2
+reportlab
+pillow
+gunicorn
+charset-normalizer
